@@ -22,8 +22,12 @@ sudo tee /etc/docker/daemon.json <<-'EOF'
 }
 EOF
 
+# 安装工具软件
+yum install -y wget vim
+
 # 安装docker
-yum install -y docker vim wget
+wget https://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo -O /etc/yum.repos.d/docker-ce.repo
+yum install -y docker-ce-18.06.1.ce-3.el7
 systemctl enable docker
 systemctl start docker
 
@@ -38,6 +42,9 @@ repo_gpgcheck=1
 gpgkey=https://mirrors.aliyun.com/kubernetes/yum/doc/yum-key.gpg https://mirrors.aliyun.com/kubernetes/yum/doc/rpm-package-key.gpg
 EOF
 
-# 安装kubeadm，kubelet和kubectl
+# 安装kubeadm, kubelet和kubectl
 yum install -y kubelet-1.18.0 kubeadm-1.18.0 kubectl-1.18.0
 systemctl enable kubelet && systemctl start kubelet
+
+# 导入flanneld
+docker load < /vagrant/flanneld-v0.14.0-amd64.docker
