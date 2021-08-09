@@ -14,6 +14,13 @@ net.bridge.bridge-nf-call-iptables = 1
 EOF
 sysctl --system
 
+# 安装工具软件
+yum install -y wget vim
+
+# 安装docker
+wget https://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo -O /etc/yum.repos.d/docker-ce.repo
+yum install -y docker-ce-18.06.1.ce-3.el7
+
 # 添加镜像加速 https://cr.console.aliyun.com/cn-hangzhou/instances/mirrors
 sudo mkdir -p /etc/docker
 sudo tee /etc/docker/daemon.json <<-'EOF'
@@ -22,14 +29,16 @@ sudo tee /etc/docker/daemon.json <<-'EOF'
 }
 EOF
 
-# 安装工具软件
-yum install -y wget vim
-
-# 安装docker
-wget https://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo -O /etc/yum.repos.d/docker-ce.repo
-yum install -y docker-ce-18.06.1.ce-3.el7
+# 配置docker代理 https://docs.docker.com/config/daemon/systemd/
+sudo mkdir -p /etc/systemd/system/docker.service.d
+cat <<EOF >/etc/systemd/system/docker.service.d/http-proxy.conf
+[Service]
+Environment="HTTP_PROXY=http://192.168.1.240:10800"
+Environment="NO_PROXY=localhost,127.0.0.1,docker-registry.example.com,.corp"
+EOF
 systemctl enable docker
 systemctl start docker
+
 
 # 添加Kubernetes镜像 https://developer.aliyun.com/mirror/kubernetes
 cat <<EOF > /etc/yum.repos.d/kubernetes.repo
@@ -46,5 +55,5 @@ EOF
 yum install -y kubelet-1.18.0 kubeadm-1.18.0 kubectl-1.18.0
 systemctl enable kubelet && systemctl start kubelet
 
-# 导入flanneld
-docker load < /vagrant/flanneld-v0.14.0-amd64.docker
+# 如果没有设置docker的代理, 需要下载flanneld从本地导入
+# docker load < /vagrant/flanneld-v0.14.0-amd64.docker
