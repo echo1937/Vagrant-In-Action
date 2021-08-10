@@ -19,10 +19,10 @@ vrrp_script check_haproxy {                # haproxy服务启动
 }
 
 vrrp_instance VI_1 {
-    state MASTER                           # 主机为MASTER, 备机为BACKUP
-    interface eth1                         # 监测网络端口, 用ipconfig查看
+    state BACKUP                           # 主机为MASTER, 备机为BACKUP
+    interface eth0                         # 监测网络端口, 用ipconfig查看
     virtual_router_id 51                   # 主备机必须相同
-    priority 250                           # 主备机取不同的优先级, 要主大备小, 从服务器上改为120
+    priority 200                           # 主备机取不同的优先级, 要主大备小, 从服务器上改为120
     advert_int 1                           # VRRP Multicast广播周期秒数
 
     authentication {
@@ -31,7 +31,7 @@ vrrp_instance VI_1 {
     }
 
     virtual_ipaddress {
-        192.168.1.20                       # VIP漂移地址, 即集群IP地址
+        192.168.10.20                       # VIP漂移地址, 即集群IP地址
     }
 
     track_script {                         # 调用haproxy进程检测脚本
@@ -108,15 +108,15 @@ frontend kubernetes-apiserver
 backend kubernetes-apiserver
     mode        tcp
     balance     roundrobin
-    server      node1   192.168.1.21:6443 check
-    server      node2   192.168.1.22:6443 check
-    server      node3   192.168.1.23:6443 check
+    server      node1   192.168.10.128:6443 check
+    server      node2   192.168.10.129:6443 check
+    server      node3   192.168.10.130:6443 check
 #---------------------------------------------------------------------
 # collection haproxy statistics message
 #---------------------------------------------------------------------
 listen stats
     bind                 *:1080
-    stats auth           admin:awesomePassword
+    stats auth           admin:admin
     stats refresh        5s
     stats realm          HAProxy\ Statistics
     stats uri            /admin?stats

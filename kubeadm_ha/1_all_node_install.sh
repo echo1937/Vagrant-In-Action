@@ -2,11 +2,11 @@
 
 # 添加解析
 cat >> /etc/hosts << EOF
-192.168.1.20 master
-192.168.1.21 node1
-192.168.1.22 node2
-192.168.1.23 node3
-192.168.1.24 node4
+192.168.10.20 master
+192.168.10.128 node1
+192.168.10.129 node2
+192.168.10.130 node3
+192.168.10.131 node4
 EOF
 
 # 将桥接的IPv4流量传递到iptables的链
@@ -35,7 +35,7 @@ EOF
 sudo mkdir -p /etc/systemd/system/docker.service.d
 cat <<EOF >/etc/systemd/system/docker.service.d/http-proxy.conf
 [Service]
-Environment="HTTP_PROXY=http://192.168.1.240:10800"
+Environment="HTTP_PROXY=http://192.168.10.1:10800"
 Environment="NO_PROXY=localhost,127.0.0.1,docker-registry.example.com,.corp"
 EOF
 systemctl enable docker
