@@ -16,9 +16,9 @@ kubeadm是官方社区推出的一个用于快速部署kubernetes集群的工具
 
 | 角色    | IP           |
 | ------ | ------------ |
-| node1  | 192.168.1.21 |
-| node2  | 192.168.1.22 |
-| node3  | 192.168.1.23 |
+| node1  | 192.168.10.21 |
+| node2  | 192.168.10.22 |
+| node3  | 192.168.10.23 |
 
 ```bash
 # 关闭防火墙
@@ -38,9 +38,9 @@ hostnamectl set-hostname <hostname>
 
 # 添加hosts
 cat >> /etc/hosts << EOF
-192.168.1.21 node1
-192.168.1.22 node2
-192.168.1.23 node3
+192.168.10.21 node1
+192.168.10.22 node2
+192.168.10.23 node3
 EOF
 
 # 将桥接的IPv4流量传递到iptables的链
@@ -103,11 +103,11 @@ systemctl enable kubelet && systemctl start kubelet
 
 ## 4. 部署Kubernetes Master
 
-在192.168.1.21(node1)执行, 注意--apiserver-advertise-address=和--image-repository要替换成node1的IP和阿里云加速源
+在192.168.10.21(node1)执行, 注意--apiserver-advertise-address=和--image-repository要替换成node1的IP和阿里云加速源
 
 ```
 kubeadm init \
-  --apiserver-advertise-address=192.168.1.21 \
+  --apiserver-advertise-address=192.168.10.21 \
   --image-repository registry.aliyuncs.com/google_containers \
   --kubernetes-version v1.18.0 \
   --service-cidr=10.96.0.0/12 \
@@ -118,12 +118,12 @@ kubeadm init \
 
 ## 5. 加入Kubernetes Node
 
-在192.168.1.22/23（Node2-3）执行。
+在192.168.10.22/23（Node2-3）执行。
 
 向集群添加新节点，执行在kubeadm init输出的kubeadm join命令：
 
 ```
-kubeadm join 192.168.1.11:6443 --token esce21.q6hetwm8si29qxwn \
+kubeadm join 192.168.10.21:6443 --token esce21.q6hetwm8si29qxwn \
   --discovery-token-ca-cert-hash sha256:00603a05805807501d7181c3d60b478788408cfe6cedefedb1f97569708be9c5
 ```
 
@@ -160,4 +160,4 @@ $ kubectl get pod,svc
 ## 8. Troubleshooting
 1. 如果使用(来自centos repo)1.13版本docker，实测registry-mirrors设置不失效，创建nginx服务时, 从docker hub拉取images会卡住；
 2. flannel文件可以[从github直接下载](https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml "从github直接下载")，flannel镜像可以[下载到本地导入](https://github.com/coreos/flannel/releases "下载到本地导入")，具体方法参见：[flannel的Init\:ImagePullBackOff错误解决方法](https://plutoacharon.github.io/2020/04/04/quay-io%E5%9B%BD%E5%86%85%E6%97%A0%E6%B3%95%E8%AE%BF%E9%97%AE%EF%BC%8C%E8%A7%A3%E5%86%B3Kubernetes%E5%BA%94%E7%94%A8flannel%E5%A4%B1%E8%B4%A5%EF%BC%8C%E6%8A%A5%E9%94%99Init-ImagePullBackOff/ "flannel的Init\:ImagePullBackOff错误")
-3. vagrant环境下需要[指定网卡为eth1](https://github.com/flannel-io/flannel/blob/master/Documentation/troubleshooting.md#vagrant "指定网卡为eth1")，否则pod网络走eth0（NAT）自然就不通了。
+3. 如果是vagrant环境多网卡, 需要[指定网卡为eth1](https://github.com/flannel-io/flannel/blob/master/Documentation/troubleshooting.md#vagrant "指定网卡为eth1")，否则pod网络走eth0（NAT）自然就不通了。
