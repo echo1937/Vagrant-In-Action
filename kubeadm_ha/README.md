@@ -265,7 +265,7 @@ kubeadm join master:6443 --token ...
 
 ## 7. 注意
 
-1. 本高可用方案中, 建议只保留的eth0以简化网络结果, 否则设置不当容易发生 [node "node1" not found错误](https://www.cnblogs.com/taoweizhong/p/11545953.html) 和etcd health check的错误;
+1. 本高可用方案中, 建议只保留的eth0以简化网络结构, 否则设置不当容易发生 [node "node1" not found错误](https://www.cnblogs.com/taoweizhong/p/11545953.html) 和etcd health check的错误;
 2. 在公有云环境中, 推荐使用类似AWS EKS的服务; 在实验环境中, 更推荐使用单独的节点假设keepalived/haproxy服务, 便于排查和调试;
 3. 其他控制节点的加入必须在安装CNI插件之后, 否则是无法加入到现有环境的;
 
