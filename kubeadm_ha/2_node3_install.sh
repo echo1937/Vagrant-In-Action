@@ -108,9 +108,9 @@ frontend kubernetes-apiserver
 backend kubernetes-apiserver
     mode        tcp
     balance     roundrobin
-    server      node1   192.168.10.128:6443 check
-    server      node2   192.168.10.129:6443 check
-    server      node3   192.168.10.130:6443 check
+    server      node1   192.168.10.21:6443 check
+    server      node2   192.168.10.22:6443 check
+    server      node3   192.168.10.23:6443 check
 #---------------------------------------------------------------------
 # collection haproxy statistics message
 #---------------------------------------------------------------------

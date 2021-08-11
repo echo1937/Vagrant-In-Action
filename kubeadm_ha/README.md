@@ -14,10 +14,10 @@
 | 角色           | IP             |
 | ------------- | -------------- |
 | master(虚拟)   | 192.168.10.20  |
-| node1         | 192.168.10.128 |
-| node2         | 192.168.10.129 |
-| node3         | 192.168.10.130 |
-| node4         | 192.168.10.131 |
+| node1         | 192.168.10.21  |
+| node2         | 192.168.10.22  |
+| node3         | 192.168.10.23  |
+| node4         | 192.168.10.24  |
 
 执行脚本: 1_all_node_install.sh
 
@@ -29,10 +29,10 @@
 # 添加解析
 cat >> /etc/hosts << EOF
 192.168.10.20 master
-192.168.10.128 node1
-192.168.10.129 node2
-192.168.10.130 node3
-192.168.10.131 node4
+192.168.10.21 node1
+192.168.10.22 node2
+192.168.10.23 node3
+192.168.10.24 node4
 EOF
 
 # 将桥接的IPv4流量传递到iptables的链
@@ -205,9 +205,9 @@ frontend kubernetes-apiserver
 backend kubernetes-apiserver
     mode        tcp
     balance     roundrobin
-    server      node1   192.168.10.128:6443 check
-    server      node2   192.168.10.129:6443 check
-    server      node3   192.168.10.130:6443 check
+    server      node1   192.168.10.21:6443 check
+    server      node2   192.168.10.22:6443 check
+    server      node3   192.168.10.23:6443 check
 #---------------------------------------------------------------------
 # collection haproxy statistics message
 #---------------------------------------------------------------------
@@ -257,11 +257,17 @@ kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documen
 ## 5. 其他控制节点的加入
 
 ```shell script
-kubeadm join master:6443 --token ...
+  kubeadm join master:16443 --token vvj6vk.vhz1qb4tgwsjwyne \
+    --discovery-token-ca-cert-hash sha256:bd4727642e7ab62eb4b206cea1f4611748a3c1922d6eded3f21a52eaddb4007c \
+    --control-plane --certificate-key 7cd0ee0b3f1b6ea6f11044b22c6adcd28edff466b376d68be825ced269685885
 ```
 
 ## 6. 其他工作节点的加入
 
+```shell
+kubeadm join master:16443 --token vvj6vk.vhz1qb4tgwsjwyne \
+    --discovery-token-ca-cert-hash sha256:bd4727642e7ab62eb4b206cea1f4611748a3c1922d6eded3f21a52eaddb4007c
+```
 
 ## 7. 注意
 
