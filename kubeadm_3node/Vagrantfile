@@ -8,11 +8,11 @@ Vagrant.configure("2") do |config|
     config.vm.define "node#{i}" do |node|
       node.vm.box = "generic/centos7"
       node.vm.hostname = "node#{i}"
-      node.vm.base_mac = "00:50:56:31:20:9#{i}"
+      node.vm.base_mac = "00505631202#{i}"
       node.vm.base_address = "192.168.10.#{20+i}"
       node.vm.synced_folder ".", "/vagrant"
 
-      node.vm.provider "virtualbox" do |vb|
+      node.vm.provider "vmware_desktop" do |vb|
         vb.gui = false      
         vb.memory = "2048"
         vb.cpus = "2"
